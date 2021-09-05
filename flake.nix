@@ -1,7 +1,5 @@
 {
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-  };
+  inputs = { nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable"; };
   outputs = { self, nixpkgs }:
     let
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
@@ -182,19 +180,21 @@
         meta.license = pkgs.lib.licenses.gpl2Plus;
       };
 
-      extract-xiso-default-xbe = pkgs.writeShellScript "extract-xiso-default-xbe" ''
-        set -euxo pipefail
+      extract-xiso-default-xbe =
+        pkgs.writeShellScript "extract-xiso-default-xbe" ''
+          set -euxo pipefail
 
-        TMPDIR=$(mktemp -d --suffix=.extract-xiso-default-xbe)
-        trap 'fusermount -u "$TMPDIR" || true; rm -rf "$TMPDIR"' EXIT
+          TMPDIR=$(mktemp -d --suffix=.extract-xiso-default-xbe)
+          trap 'fusermount -u "$TMPDIR" || true; rm -rf "$TMPDIR"' EXIT
 
-        ${xbfuse}/bin/xbfuse "$1" "$TMPDIR"
-        # cp gives a weird "failed to extend" error here
-        cat "$TMPDIR/default.xbe" > "$2"
-      '';
+          ${xbfuse}/bin/xbfuse "$1" "$TMPDIR"
+          # cp gives a weird "failed to extend" error here
+          cat "$TMPDIR/default.xbe" > "$2"
+        '';
 
       extra-python-libs = ps:
-        with ps; [
+        with ps;
+        [
           (buildPythonPackage rec {
             pname = "pyxbe";
             version = "a7ae1bb2";
@@ -296,16 +296,15 @@
       '';
 
       output-symlinks = pkgs.linkFarm "xbox-iso-loader" [
-      {
-        name = "prepare-xiso";
-        path = prepare-xiso;
-      }
-      {
-        name = "patcher.xbe";
-        path = xbox-iso-loader-patch;
-      }];
+        {
+          name = "prepare-xiso";
+          path = prepare-xiso;
+        }
+        {
+          name = "patcher.xbe";
+          path = xbox-iso-loader-patch;
+        }
+      ];
 
-    in {
-        defaultPackage.x86_64-linux = output-symlinks;
-    };
+    in { defaultPackage.x86_64-linux = output-symlinks; };
 }
