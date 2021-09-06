@@ -188,8 +188,11 @@
           trap 'fusermount -u "$TMPDIR" || true; rm -rf "$TMPDIR"' EXIT
 
           ${xbfuse}/bin/xbfuse "$1" "$TMPDIR"
-          # cp gives a weird "failed to extend" error here
-          cat "$TMPDIR/default.xbe" > "$2"
+
+          # find file case-insensitive-ly
+          DEFAULT_XBE="$(find "$TMPDIR" -maxdepth 1 -type f -iname default.xbe -print)"
+          # cp gives a weird "failed to extend" error here, xbfuse bug?
+          cat "$DEFAULT_XBE" > "$2"
         '';
 
       extra-python-libs = ps:
