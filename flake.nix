@@ -284,7 +284,7 @@
 
         INPUT_FILE="$1"
         # what a regex, huh?
-        OUTPUT_PATH="$2/$(basename "$INPUT_FILE" .iso | sed -E 's|[^][A-Za-z0-9 !#$%&'"'"'()\\.@^_`{}~-]|_|g' | cut -c -42)"
+        OUTPUT_PATH="$2/$(basename "$INPUT_FILE" .iso | tr -cs '[:alnum:] \n[]!#$%&'"'"'().@^_`{}~-' '_' | cut -c -42)"
 
         mkdir -p "$OUTPUT_PATH"
 
