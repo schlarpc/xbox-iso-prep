@@ -283,7 +283,7 @@
         set -euxo pipefail
 
         INPUT_FILE="$1"
-        # what a regex, huh?
+        # sanitize directory name to FATX standards
         OUTPUT_PATH="$2/$(basename "$INPUT_FILE" .iso | tr -cs '[:alnum:] \n[]!#$%&'"'"'().@^_`{}~-' '_' | cut -c -42)"
 
         mkdir -p "$OUTPUT_PATH"
