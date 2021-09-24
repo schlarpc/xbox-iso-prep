@@ -233,6 +233,14 @@
                     return 0
                 return super().vaddr_to_file_offset(addr)
 
+            def _init_from_data(self, data):
+                # some games (example: Metal Slug 4 [USA]) are fubared and it's actually not
+                # important for me to figure out why since I'm just trying to grab the metadata
+                try:
+                    super()._init_from_data(data)
+                except Exception:
+                    xbe.log.exception("Exception occured during parse, object is corrupted")
+
 
         def get_args():
             parser = argparse.ArgumentParser()
@@ -266,7 +274,8 @@
                     cert_attribute,
                     getattr(source_xbe.cert, cert_attribute),
                 )
-            destination_xbe.sections["$$XTIMAGE"] = source_xbe.sections["$$XTIMAGE"]
+            if "$$XTIMAGE" in source_xbe.sections:
+                destination_xbe.sections["$$XTIMAGE"] = source_xbe.sections["$$XTIMAGE"]
 
             destination_resolved = args.destination.resolve()
             with tempfile.TemporaryDirectory(suffix="transplant-xbe-metadata") as tempdir:
